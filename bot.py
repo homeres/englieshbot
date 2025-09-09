@@ -1,5 +1,4 @@
-# file: english_bot_webhook.py
-import os
+# file: bot.py
 import json
 from aiohttp import web
 from aiogram import Bot, Dispatcher, F
@@ -7,8 +6,9 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.client.default import DefaultBotProperties
 
 # --- Конфигурация ---
-TOKEN = os.getenv("BOT_TOKEN")
-ADMIN_ID = int(os.getenv("ADMIN_ID", 0))  # поставь свой Telegram ID в переменной окружения
+TOKEN = "8356883403:AAGBj1S7mtncZsyrwK-NkttCLaoiP4DfYiI"  # твой токен
+ADMIN_ID = 7066738174  # твой Telegram ID
+DATA_FILE = "data.json"
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
 dp = Dispatcher(bot)
@@ -37,7 +37,6 @@ admin_state = {}
 temp_storage = {}
 
 # --- Данные ---
-DATA_FILE = "data.json"
 def load_data():
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
@@ -71,7 +70,7 @@ async def send_and_delete_old(message: Message, text=None, photo=None, caption=N
 def is_admin(user_id):
     return user_id == ADMIN_ID
 
-# --- Команды /start ---
+# --- Команды /start и /admin ---
 @dp.message(F.text == "/start")
 async def cmd_start(message: Message):
     await send_and_delete_old(message, "Привет! Я бот 7А по английскому языку 🇬🇧", keyboard=main_kb)
@@ -206,10 +205,10 @@ async def handle(request):
 app = web.Application()
 app.router.add_post(f"/{TOKEN}", handle)
 
-# --- Запуск (Render сам даёт HTTPS) ---
+# --- Запуск ---
 if __name__ == "__main__":
-    import aiohttp
     import asyncio
+    from aiohttp import web
 
     port = int(os.getenv("PORT", 10000))
     web.run_app(app, port=port)
